@@ -60,13 +60,23 @@ class TestSmartcropper < Test::Unit::TestCase
     assert_equal([19, 19], size)
   end
 
-  should "still crop a car clear" do
+  should "should auto crop with a border" do
     full_path = File.join File.dirname(__FILE__), "fixtures", "cars"
     Dir.open(full_path).select{|f| !File.directory?(f) && f.end_with?(".jpg") }.each do |file|
       puts file
       realpath = File.realpath(File.join(full_path, file))
       img = SmartCropper.new(Magick::ImageList.new(realpath).last)
-      img.auto_crop(true).write("cars/out-#{file}")
+      img.auto_crop(true).write("cars-bordered/#{file}")
+    end
+  end
+
+  should "should auto crop without a border" do
+    full_path = File.join File.dirname(__FILE__), "fixtures", "cars"
+    Dir.open(full_path).select{|f| !File.directory?(f) && f.end_with?(".jpg") }.each do |file|
+      puts file
+      realpath = File.realpath(File.join(full_path, file))
+      img = SmartCropper.new(Magick::ImageList.new(realpath).last)
+      img.auto_crop.write("cars-cropped/#{file}")
     end
   end
 

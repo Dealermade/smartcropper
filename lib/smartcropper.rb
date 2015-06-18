@@ -39,14 +39,14 @@ class SmartCropper
     return @image.crop!(sq[:left], sq[:top], width, height, true)
   end
 
-  def auto_crop(draw_line = false)
+  def auto_crop(draw_border = false)
     sq = colored_area_detect
-    if draw_line
+    if draw_border
       box = Magick::Draw.new
       box.stroke('tomato')
       box.fill_opacity(0)
       box.stroke_opacity(0.75)
-      box.stroke_width(6)
+      box.stroke_width(8)
       box.polygon(sq[:left], sq[:top], sq[:right], sq[:top], sq[:right], sq[:bottom], sq[:left], sq[:bottom])
       box.draw(@image)
       @image
@@ -161,25 +161,22 @@ class SmartCropper
           height = (bottom - top)
         end
       end
-
       if width > height
-        new_height = width * HEIGHT_AR
+        new_height = width * HEIGHT_AR #533
         bottom_diff = (@rows - bottom)
         total_distance = top + bottom_diff
-        puts "new_height:#{new_height}:old_height:#{height}"
-        puts "top:#{top}:bottom:#{bottom}"
-        top -= (new_height-height) * (top / total_distance.to_f)
-        bottom += (new_height-height) * (bottom_diff / total_distance.to_f)
-        puts "top:#{top}:bottom:#{bottom}"
+        height_diff = new_height-height
+
+        top -= (height_diff * (top / total_distance.to_f)).round
+        bottom += (height_diff * (bottom_diff / total_distance.to_f)).round
       else
         new_width = height * WIDTH_AR
-        puts "new_width:#{new_width}:old_width:#{width}"
+
         right_diff = (@columns - right)
         total_distance = left + right_diff
-        puts "left:#{left}:right:#{right}"
-        left -= (new_width-width) * (left / total_distance.to_f)
-        right += (new_width-width) * (right_diff / total_distance.to_f)
-        puts "left:#{left}:right:#{right}"
+        width_diff = new_width-width
+        left -= (width_diff * (left / total_distance.to_f)).round
+        right += (width_diff * (right_diff / total_distance.to_f)).round
       end
 
       square = {:left => left, :top => top, :right => right, :bottom => bottom}
