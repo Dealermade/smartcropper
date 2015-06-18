@@ -29,12 +29,14 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://berk.es/smartcropper}
   s.licenses = ["GPL"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.2}
+  s.rubygems_version = %q{2.4.6}
   s.summary = %q{Content aware image cropping in Ruby and Carrierwave}
   s.test_files = `git ls-files test`.split("\n")
-  s.add_dependency(%q<rmagick>, ["> 2.11.0"])
+  s.add_dependency(%q<rmagick>, [">= 2.15.2"])
 
-  s.add_development_dependency('rake', [">= 0"])
-  s.add_development_dependency('rspec', [">= 0"])
-  s.add_development_dependency('shoulda', [">= 0"])
+  s.add_development_dependency('rake')
+  s.add_development_dependency('byebug')
+  s.add_development_dependency('rspec')
+  s.add_development_dependency('test-unit')
+  s.add_development_dependency('shoulda')
 end

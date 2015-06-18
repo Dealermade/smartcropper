@@ -60,6 +60,15 @@ class TestSmartcropper < Test::Unit::TestCase
     assert_equal([19, 19], size)
   end
 
+  should "still crop a car clear" do
+    full_path = File.join File.dirname(__FILE__), "fixtures", "cars"
+    Dir.open(full_path).select{|f| !File.directory?(f)}.each do |file|
+      realpath = File.realpath(File.join full_path, file)
+      img = SmartCropper.new(Magick::ImageList.new(realpath).last)
+      img.auto_crop(true).write("out-#{file}")
+    end
+  end
+
   should "return original image, not quantized" do
     img = SmartCropper.new(@image)
     assert_equal(img.image, @image)
