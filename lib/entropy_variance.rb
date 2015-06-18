@@ -32,9 +32,11 @@ class EntropyVariance
     @elements
   end
 
-  def <<(x)
+  def <<(arr)
+    x, hist = arr[0], arr[1]
     @averages << { mean: @elements.mean, standard_deviation: @elements.standard_deviation,
-      element_deviation: x-@elements.mean, large?: x-@elements.mean > @elements.standard_deviation }
+      element_deviation: x-@elements.mean, large?: x-@elements.mean > @elements.standard_deviation * 1.05, histogram: hist }
+    hist.keys.map { |k| puts "#{k.to_color} - #{hist[k]}" }
     @elements << x
   end
 
@@ -43,12 +45,12 @@ class EntropyVariance
   end
 
   def last_element_deviation
-    (@elements.last-@elements.mean)
+    @averages.last[:element_deviation]
   end
 
   def last_elements_abnormally_large?
     return false if @elements.size < 5
-    @averages.last[:large?] && @averages[@elements.length-2][:large?]
+    @averages.last[:large?]
   end
 
   def current

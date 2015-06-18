@@ -108,23 +108,23 @@ class SmartCropper
         while (width > requested_x)
           slice_width = [(width - requested_x), step_size].min
           unless v[:left_side].last_elements_abnormally_large?
-            v[:left_side] << entropy_slice(@quantized_image, left, 0, slice_width, bottom)
+            v[:left_side] << entropy_hist_slice(@quantized_image, left, 0, slice_width, bottom)
             left += slice_width unless v[:left_side].last_elements_abnormally_large?
           end
 
           unless v[:right_side].last_elements_abnormally_large?
-            v[:right_side] << entropy_slice(@quantized_image, (right - slice_width), 0, slice_width, bottom)
+            v[:right_side] << entropy_hist_slice(@quantized_image, (right - slice_width), 0, slice_width, bottom)
             right -= slice_width unless v[:right_side].last_elements_abnormally_large?
           end
-          #byebug
-          break if v[:left_side].last_elements_abnormally_large? && v[:right_side].last_elements_abnormally_large?
 
+          if v[:left_side].last_elements_abnormally_large? && v[:right_side].last_elements_abnormally_large?
+            puts "left_side_last_element_deviation:#{v[:left_side].last_element_deviation}"
+            puts "right_side_last_element_deviation:#{v[:right_side].last_element_deviation}"
+            break
+          end
           width = (right - left)
 
-          puts "width:#{width}:left_side:#{v[:left_side].cur}:right_side:#{v[:right_side].cur}"
         end
-        puts "v[:left_side]:#{v[:left_side].elements}"
-        puts "v[:right_side]:#{v[:right_side].elements}"
 
         last_side = 0
         # Slice from top and bottom edges until the correct height is reached.
@@ -133,29 +133,30 @@ class SmartCropper
 
 
           unless v[:bottom_side].last_elements_abnormally_large?
-            v[:bottom_side] << entropy_slice(@quantized_image, 0, (bottom - slice_height), @columns, slice_height)
+            v[:bottom_side] << entropy_hist_slice(@quantized_image, 0, (bottom - slice_height), @columns, slice_height)
             unless v[:bottom_side].last_elements_abnormally_large?
 
               bottom -= slice_height
-              puts "taking up bottom"
             end
           end
 
           unless v[:top_side].last_elements_abnormally_large?
-            v[:top_side] << entropy_slice(@quantized_image, 0, top, @columns, slice_height)
+            v[:top_side] << entropy_hist_slice(@quantized_image, 0, top, @columns, slice_height)
             unless v[:top_side].last_elements_abnormally_large?
-              puts "cutting off top"
               top += slice_height
             end
+
           end
           #byebug
-          break if v[:top_side].last_elements_abnormally_large? && v[:top_side].last_elements_abnormally_large?
+
+          if v[:top_side].last_elements_abnormally_large? && v[:bottom_side].last_elements_abnormally_large?
+            puts "top_side_last_element_deviation:#{v[:top_side].last_element_deviation}"
+            puts "bottom_side_last_element_deviation:#{v[:bottom_side].last_element_deviation}"
+            break
+          end
 
           height = (bottom - top)
-          puts "height:#{height}last_side:#{last_side}"
         end
-        puts "v[:bottom_side]:#{v[:bottom_side].elements}"
-        puts "v[:top_side]:#{v[:top_side].elements}"
       end
 
       square = {:left => left, :top => top, :right => right, :bottom => bottom}
@@ -209,9 +210,26 @@ class SmartCropper
       entropy = entropy(slice)
     end
 
+    def entropy_hist_slice(image_data, x, y, width, height)
+      slice = image_data.crop(x, y, width, height)
+      entropy = entropy_hist(slice)
+    end
+
     def colorfulness_slice(image_data, x, y, width, height)
       slice = image_data.crop(x, y, width, height)
       entropy = colorfulness(slice)
+    end
+
+    def entropy_hist(image_slice)
+      hist = image_slice.color_histogram
+      hist_size = hist.values.inject{|sum,x| sum ? sum + x : x }.to_f
+
+      entropy = 0
+      hist.values.each do |h|
+        p = h.to_f / hist_size
+        entropy += (p * (Math.log(p)/Math.log(2))) if p != 0
+      end
+      return [entropy * -1, hist]
     end
 
     def entropy(image_slice)
