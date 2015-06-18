@@ -34,9 +34,12 @@ class EntropyVariance
 
   def <<(arr)
     x, hist = arr[0], arr[1]
+    hist_hash = {}
+    hist.select { |k,v| v > 1 }.each_pair { |k,v| hist_hash[k.to_color] = v }
+
     @averages << { mean: @elements.mean, standard_deviation: @elements.standard_deviation,
-      element_deviation: x-@elements.mean, large?: x-@elements.mean > @elements.standard_deviation * 1.05, histogram: hist }
-    hist.keys.map { |k| puts "#{k.to_color} - #{hist[k]}" }
+      element_deviation: x-@elements.mean, large?: x-@elements.mean > @elements.standard_deviation * 1.05, hist_hash: hist_hash }
+
     @elements << x
   end
 
@@ -50,7 +53,7 @@ class EntropyVariance
 
   def last_elements_abnormally_large?
     return false if @elements.size < 5
-    @averages.last[:large?]
+    @averages.last[:large?] && (@averages.last[:hist_hash].keys.select { |k| !@averages[@averages.length-2][:hist_hash].has_key?(k) }.count >= 14)
   end
 
   def current

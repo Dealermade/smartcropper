@@ -4,6 +4,9 @@ require 'byebug'
 
 class SmartCropper
   include Magick
+  WIDTH_AR = 1.5
+  HEIGHT_AR = 0.6666666667
+
 
   attr_accessor :image
   attr_accessor :steps
@@ -14,7 +17,7 @@ class SmartCropper
     @image = image
 
     # Hardcoded (but overridable) defaults.
-    @steps  = 100
+    @steps  = 120
 
     # Preprocess image.
     @quantized_image = @image.quantize
@@ -159,6 +162,26 @@ class SmartCropper
         end
       end
 
+      if width > height
+        new_height = width * HEIGHT_AR
+        bottom_diff = (@rows - bottom)
+        total_distance = top + bottom_diff
+        puts "new_height:#{new_height}:old_height:#{height}"
+        puts "top:#{top}:bottom:#{bottom}"
+        top -= (new_height-height) * (top / total_distance.to_f)
+        bottom += (new_height-height) * (bottom_diff / total_distance.to_f)
+        puts "top:#{top}:bottom:#{bottom}"
+      else
+        new_width = height * WIDTH_AR
+        puts "new_width:#{new_width}:old_width:#{width}"
+        right_diff = (@columns - right)
+        total_distance = left + right_diff
+        puts "left:#{left}:right:#{right}"
+        left -= (new_width-width) * (left / total_distance.to_f)
+        right += (new_width-width) * (right_diff / total_distance.to_f)
+        puts "left:#{left}:right:#{right}"
+      end
+
       square = {:left => left, :top => top, :right => right, :bottom => bottom}
     end
 
@@ -200,7 +223,6 @@ class SmartCropper
           height = (bottom - top)
         end
       end
-
       square = {:left => left, :top => top, :right => right, :bottom => bottom}
     end
 
