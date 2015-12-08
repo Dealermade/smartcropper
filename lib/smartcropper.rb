@@ -1,6 +1,5 @@
 require 'rmagick'
 require 'entropy_variance'
-require 'byebug'
 
 class SmartCropper
   include Magick
@@ -150,7 +149,6 @@ class SmartCropper
             end
 
           end
-          #byebug
 
           if v[:top_side].last_elements_abnormally_large? && v[:bottom_side].last_elements_abnormally_large?
             puts "top_side_last_element_deviation:#{v[:top_side].last_element_deviation}"
