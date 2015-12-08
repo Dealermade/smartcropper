@@ -1,4 +1,4 @@
-require 'RMagick'
+require 'rmagick'
 require 'entropy_variance'
 require 'byebug'
 
