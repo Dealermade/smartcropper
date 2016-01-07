@@ -38,7 +38,7 @@ class SmartCropper
     return @image.crop!(sq[:left], sq[:top], width, height, true)
   end
 
-  def auto_crop(draw_border = false)
+  def auto_crop!(draw_border = false)
     sq = colored_area_detect
     if draw_border
       box = Magick::Draw.new
@@ -120,15 +120,12 @@ class SmartCropper
           end
 
           if v[:left_side].last_elements_abnormally_large? && v[:right_side].last_elements_abnormally_large?
-            puts "left_side_last_element_deviation:#{v[:left_side].last_element_deviation}"
-            puts "right_side_last_element_deviation:#{v[:right_side].last_element_deviation}"
             break
           end
           width = (right - left)
 
         end
 
-        last_side = 0
         # Slice from top and bottom edges until the correct height is reached.
         while (height > requested_y)
           slice_height = [(height - step_size), step_size].min
@@ -151,8 +148,6 @@ class SmartCropper
           end
 
           if v[:top_side].last_elements_abnormally_large? && v[:bottom_side].last_elements_abnormally_large?
-            puts "top_side_last_element_deviation:#{v[:top_side].last_element_deviation}"
-            puts "bottom_side_last_element_deviation:#{v[:bottom_side].last_element_deviation}"
             break
           end
 
@@ -177,7 +172,7 @@ class SmartCropper
         right += (width_diff * (right_diff / total_distance.to_f)).round
       end
 
-      square = {:left => left, :top => top, :right => right, :bottom => bottom}
+      {:left => left, :top => top, :right => right, :bottom => bottom}
     end
 
     def smart_crop_by_trim(requested_x, requested_y)
@@ -218,7 +213,7 @@ class SmartCropper
           height = (bottom - top)
         end
       end
-      square = {:left => left, :top => top, :right => right, :bottom => bottom}
+      {:left => left, :top => top, :right => right, :bottom => bottom}
     end
 
     # Compute the entropy of an image slice.
@@ -229,12 +224,12 @@ class SmartCropper
 
     def entropy_hist_slice(image_data, x, y, width, height)
       slice = image_data.crop(x, y, width, height)
-      entropy = entropy_hist(slice)
+      entropy_hist(slice)
     end
 
     def colorfulness_slice(image_data, x, y, width, height)
       slice = image_data.crop(x, y, width, height)
-      entropy = colorfulness(slice)
+      colorfulness(slice)
     end
 
     def entropy_hist(image_slice)

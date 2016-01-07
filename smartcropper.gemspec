@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{smartcropper}
-  s.version = "0.7.1"
+  s.version = "0.8.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Bèr Kessels"]
-  s.date = %q{2011-04-19}
+  s.authors = ["Bèr Kessels", "Jared Dobson"]
+  s.date = %q{2016-01-07}
   s.description = %q{Crops images based on entropy: leaving the most interesting part intact. Usefull for automatic cropping or resizing of images. }
-  s.email = %q{ber@webschuur.com}
+  s.email = %q{ber@webschuur.com jared.dobson@live.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{2.4.6}
   s.summary = %q{Content aware image cropping in Ruby and Carrierwave}
   s.test_files = `git ls-files test`.split("\n")
-  s.add_dependency(%q<rmagick>, [">= 2.15.2"])
+  s.add_dependency(%q<rmagick>, [">= 2.15.4"])
 
   s.add_development_dependency('rake')
   s.add_development_dependency('byebug')

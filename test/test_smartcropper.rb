@@ -66,7 +66,7 @@ class TestSmartcropper < Test::Unit::TestCase
       puts file
       realpath = File.realpath(File.join(full_path, file))
       img = SmartCropper.new(Magick::ImageList.new(realpath).last)
-      img.auto_crop(true).write("cars-bordered/#{file}")
+      img.auto_crop!(true).write("test/fixtures/cars-bordered/#{file}")
     end
   end
 
@@ -76,7 +76,7 @@ class TestSmartcropper < Test::Unit::TestCase
       puts file
       realpath = File.realpath(File.join(full_path, file))
       img = SmartCropper.new(Magick::ImageList.new(realpath).last)
-      img.auto_crop.write("cars-cropped/#{file}")
+      img.auto_crop!.write("test/fixtures/cars-cropped/#{file}")
     end
   end
 

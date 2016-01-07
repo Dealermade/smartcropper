@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    smartcropper (0.7.1)
-      rmagick (>= 2.15.2)
+    smartcropper (0.7.3)
+      rmagick (>= 2.15.4)
 
 GEM
   remote: https://rubygems.org/
@@ -22,7 +22,7 @@ GEM
     minitest (5.7.0)
     power_assert (0.2.2)
     rake (10.4.2)
-    rmagick (2.15.2)
+    rmagick (2.15.4)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
       rspec-expectations (~> 3.3.0)
@@ -58,3 +58,6 @@ DEPENDENCIES
   shoulda
   smartcropper!
   test-unit
+
+BUNDLED WITH
+   1.11.2
